@@ -28,7 +28,8 @@ ENV CONAN_SYSREQUIRES_SUDO 0
 ENV CONAN_SYSREQUIRES_MODE enabled
 
 # User-settable versions:
-# This Dockerfile should support gcc-[7, 8, 9, 10, 11] and clang-[10, 11, 12, 13]
+# This Dockerfile should support gcc-[7, 8, 9, 10, 11, 12, 13]
+# and clang-[10, 11, 12, 13, 14, 15, 16, 17].
 # Earlier versions of clang will require significant modifications to the IWYU section
 ARG GCC_VER="11"
 # Add gcc-${GCC_VER}
@@ -79,11 +80,12 @@ RUN apt-get update -qq && export DEBIAN_FRONTEND=noninteractive && \
         doxygen graphviz ccache cppcheck
 
 # Install include-what-you-use
+ARG IWYU_BRANCH clang_${LLVM_VER}
 ENV IWYU /home/iwyu
 ENV IWYU_BUILD ${IWYU}/build
 ENV IWYU_SRC ${IWYU}/include-what-you-use
 RUN mkdir -p ${IWYU_BUILD} && \
-    git clone --branch clang_${LLVM_VER} \
+    git clone --branch ${IWYU_BRANCH} \
         https://github.com/include-what-you-use/include-what-you-use.git \
         ${IWYU_SRC}
 RUN CC=clang-${LLVM_VER} CXX=clang++-${LLVM_VER} cmake -S ${IWYU_SRC} \
